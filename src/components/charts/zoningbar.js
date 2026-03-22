@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { BOROUGH_PALETTE, BOROUGH_NAMES, BOROUGH_ORDER } from '../colors';
+import { BOROUGH_PALETTE, BOROUGH_NAMES, BOROUGH_ORDER } from '../../colors';
 
 /* ── Human-readable zoning descriptions ─────────────────────────── */
 const ZONING_INFO = {

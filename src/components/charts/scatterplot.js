@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { BOROUGH_COLOR, BOROUGH_NAMES, BOROUGH_ORDER } from '../colors';
+import { BOROUGH_COLOR, BOROUGH_NAMES, BOROUGH_ORDER } from '../../colors';
 
 function ScatterPlot({ data, onBrush, brushRange }) {
   const svgRef = useRef();

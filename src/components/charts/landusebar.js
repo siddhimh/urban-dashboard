@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { DIVERGING_INTERPOLATOR } from '../colors';
+import { DIVERGING_INTERPOLATOR } from '../../colors';
 
 const LAND_USE_LABELS = {
   "1": "One & Two Family",

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { BOROUGH_NAMES, DIVERGING_INTERPOLATOR } from '../colors';
+import { BOROUGH_NAMES, DIVERGING_INTERPOLATOR } from '../../colors';
 
 function DotMap({ data }) {
   const svgRef = useRef();

@@ -5,7 +5,7 @@ import * as d3 from 'd3';
  * Warm ← neutral → Cool
  *   Manhattan (MN)     — deep rose      #c4314b
  *   Bronx (BX)         — warm amber     #e58429
- *   Staten Island (SI) — muted sage     #8a8a8a  (neutral pivot)
+ *   Staten Island (SI) — muted sage     #8a8a8a 
  *   Queens (QN)        — teal           #2fa4a0
  *   Brooklyn (BK)      — steel blue     #3969ac
  */

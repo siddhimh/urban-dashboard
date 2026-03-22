@@ -1,14 +1,12 @@
+//Loads the NYC building data and displays a dashboard with the data
 import { useState, useEffect, useMemo } from 'react';
 import * as d3 from 'd3';
-import ScatterPlot from './components/scatterplot';
-import SummaryCards from './components/summarycards';
-import TrendLine from './components/trendline';
-import LandUseBar from './components/landusebar';
-import ZoningBar from './components/zoningbar';
-import DotMap from './components/dotmap';
-import { BOROUGH_NAMES, BOROUGH_PALETTE, BOROUGH_ORDER } from './colors';
+import { BOROUGH_NAMES } from './colors';
 import './app.css';
+import DashboardLayout from "./components/layout/dashboard";
 
+
+//Land use codes are mapped to human-readable labels
 const LAND_USE_LABELS = {
   "1": "One & Two Family", "2": "Multi-Family Walk-Up", "3": "Multi-Family Elevator",
   "4": "Mixed Res/Commercial", "5": "Commercial & Office", "6": "Industrial & Mfg",
@@ -16,16 +14,22 @@ const LAND_USE_LABELS = {
   "10": "Parking", "11": "Vacant Land"
 };
 
+
 function App() {
+
+  //raw dataset
   const [sampleData, setSampleData] = useState([]);
+
+  //pre-computed summary statistics
   const [fullStats, setFullStats] = useState(null);
 
-  // Cross-filter state — selectedBoroughs is a Set (empty = all)
+  //interactive cross-filtering across chart
   const [selectedBoroughs, setSelectedBoroughs] = useState(new Set());
   const [selectedLandUse, setSelectedLandUse] = useState(null);
   const [selectedZoning, setSelectedZoning] = useState(null);
   const [brushRange, setBrushRange] = useState(null);
 
+  //adding and removing borough from set and toggling
   const toggleBorough = (b) => {
     setSelectedBoroughs(prev => {
       const next = new Set(prev);
@@ -35,11 +39,14 @@ function App() {
     });
   };
 
+  //loading the csv data 
   useEffect(() => {
     Promise.all([
       d3.csv("/pluto_sample.csv"),
       d3.csv("/full_stats.csv")
     ]).then(([sample, stats]) => {
+
+      //convert numeric fields from strings to numbers
       sample = sample.map(d => ({
         ...d,
         yearbuilt: +d.yearbuilt,
@@ -50,7 +57,7 @@ function App() {
       }));
       setSampleData(sample);
 
-      // full_stats.csv has a single row — parse to numbers
+      //parse summary statistics
       const s = stats[0];
       setFullStats({
         total_buildings: +s.total_buildings,
@@ -72,7 +79,8 @@ function App() {
     });
   }, []);
 
-  // Fully filtered data (all filters applied) — used by ScatterPlot, DotMap, SummaryCards
+
+  //applying the different filters
   const filteredData = useMemo(() => {
     let data = sampleData;
     if (selectedBoroughs.size > 0) data = data.filter(d => selectedBoroughs.has(d.borough));
@@ -82,7 +90,7 @@ function App() {
     return data;
   }, [sampleData, selectedBoroughs, selectedLandUse, selectedZoning, brushRange]);
 
-  // Data for LandUseBar: filtered by everything EXCEPT land use (so all bars stay visible)
+  //data for LandUseBar: filtered by everything EXCEPT land use
   const dataForLandUse = useMemo(() => {
     let data = sampleData;
     if (selectedBoroughs.size > 0) data = data.filter(d => selectedBoroughs.has(d.borough));
@@ -91,7 +99,7 @@ function App() {
     return data;
   }, [sampleData, selectedBoroughs, selectedZoning, brushRange]);
 
-  // Data for ZoningBar: filtered by everything EXCEPT zoning (so all zones stay visible)
+  //data for ZoningBar: filtered by everything EXCEPT zoning
   const dataForZoning = useMemo(() => {
     let data = sampleData;
     if (selectedBoroughs.size > 0) data = data.filter(d => selectedBoroughs.has(d.borough));
@@ -100,10 +108,10 @@ function App() {
     return data;
   }, [sampleData, selectedBoroughs, selectedLandUse, brushRange]);
 
-  // Aggregated land use data — recomputed live from cross-filtered data
+
+  //computes the land use statistics for floors and building area
   const landUseComputed = useMemo(() => {
     if (!dataForLandUse.length) return [];
-    // Only include valid land use codes (1–11)
     const valid = dataForLandUse.filter(d => +d.landuse >= 1 && +d.landuse <= 11);
     const grouped = d3.rollup(valid,
       v => ({
@@ -121,7 +129,8 @@ function App() {
     }));
   }, [dataForLandUse]);
 
-  // Aggregated trend data — recomputed live from cross-filtered data
+
+  //computes median building height trends per decade per borough
   const trendComputed = useMemo(() => {
     if (!filteredData.length) return [];
     const decadeData = filteredData
@@ -147,15 +156,28 @@ function App() {
     return result;
   }, [filteredData]);
 
+
+  //shows the list of active filtero
   const activeFilters = [];
   if (selectedBoroughs.size > 0) activeFilters.push({
     key: 'borough',
     label: [...selectedBoroughs].map(b => BOROUGH_NAMES[b] || b).join(', ')
   });
-  if (selectedLandUse) activeFilters.push({ key: 'landuse', label: LAND_USE_LABELS[selectedLandUse] || `Land Use ${selectedLandUse}` });
-  if (selectedZoning) activeFilters.push({ key: 'zoning', label: `Zone ${selectedZoning}` });
-  if (brushRange) activeFilters.push({ key: 'brush', label: `Years ${brushRange[0]}\u2013${brushRange[1]}` });
+  if (selectedLandUse) activeFilters.push({ 
+    key: 'landuse', 
+    label: LAND_USE_LABELS[selectedLandUse] || `Land Use ${selectedLandUse}` 
+  });
+  if (selectedZoning) activeFilters.push({ 
+    key: 'zoning', 
+    label: `Zone ${selectedZoning}` 
+  });
+  if (brushRange) activeFilters.push({ 
+    key: 'brush', 
+    label: `Years ${brushRange[0]}\u2013${brushRange[1]}` 
+  });
+  
 
+  //resetting individual filters
   const clearFilter = (key) => {
     if (key === 'borough') setSelectedBoroughs(new Set());
     if (key === 'landuse') setSelectedLandUse(null);
@@ -163,6 +185,7 @@ function App() {
     if (key === 'brush') setBrushRange(null);
   };
 
+  //resetting all filters
   const clearAll = () => {
     setSelectedBoroughs(new Set());
     setSelectedLandUse(null);
@@ -170,6 +193,7 @@ function App() {
     setBrushRange(null);
   };
 
+  //loading screen till data is loaded on screen
   if (!sampleData.length) {
     return (
       <div className="app" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f4f5f9' }}>
@@ -178,118 +202,27 @@ function App() {
     );
   }
 
+  //creates a layout for the dashboard
   return (
-    <div className="app">
-      {/* Top Bar */}
-      <div className="top-bar">
-        <div className="top-bar-left">
-          <div className="top-bar-logo">UM</div>
-          <div className="top-bar-title">
-            <h1>Urban Morphology Dashboard</h1>
-            <span>NYC Building Analytics &mdash; {d3.format(",")(fullStats ? fullStats.total_buildings : sampleData.length)} buildings across 5 boroughs</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="filters-bar">
-        <div className="filter-group">
-          <label>Borough</label>
-          <div className="borough-chips">
-            {BOROUGH_ORDER.map(b => (
-              <button
-                key={b}
-                className={`borough-chip ${selectedBoroughs.has(b) ? 'active' : ''}`}
-                style={{
-                  '--chip-color': BOROUGH_PALETTE[b],
-                  borderColor: selectedBoroughs.has(b) ? BOROUGH_PALETTE[b] : undefined,
-                  background: selectedBoroughs.has(b) ? BOROUGH_PALETTE[b] + '18' : undefined,
-                  color: selectedBoroughs.has(b) ? BOROUGH_PALETTE[b] : undefined
-                }}
-                onClick={() => toggleBorough(b)}
-              >
-                <span className="chip-dot" style={{ background: BOROUGH_PALETTE[b] }}></span>
-                {BOROUGH_NAMES[b]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {activeFilters.length > 0 && (
-          <div className="active-filters">
-            {activeFilters.map(f => (
-              <span key={f.key} className="filter-tag" onClick={() => clearFilter(f.key)}>
-                {f.label} <span className="clear-x">&times;</span>
-              </span>
-            ))}
-            {activeFilters.length > 1 && (
-              <button className="clear-all-btn" onClick={clearAll}>Clear All</button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <div className="main-content">
-        <SummaryCards data={filteredData} total={sampleData.length} fullStats={fullStats} />
-
-        {/* Row 1: Scatterplot + Geographic Distribution */}
-        <div className="dashboard-row row-equal">
-          <div className="chart-card">
-            <div className="chart-card-header">
-              <div>
-                <h3>Year Built vs Number of Floors</h3>
-                <div className="chart-subtitle">Brush to select a year range. Size = building area, color = borough.</div>
-              </div>
-            </div>
-            <ScatterPlot data={filteredData} onBrush={setBrushRange} brushRange={brushRange} />
-          </div>
-
-          <div className="chart-card">
-            <div className="chart-card-header">
-              <div>
-                <h3>Geographic Distribution</h3>
-                <div className="chart-subtitle">Each dot is a building. Color = number of floors.</div>
-              </div>
-            </div>
-            <DotMap data={filteredData} />
-          </div>
-        </div>
-
-        {/* Row 2: Trend Line + Land Use + Zoning */}
-        <div className="dashboard-row row-three">
-          <div className="chart-card">
-            <div className="chart-card-header">
-              <div>
-                <h3>Building Height Trends</h3>
-                <div className="chart-subtitle">Median floors per decade. Click legend to toggle.</div>
-              </div>
-            </div>
-            <TrendLine data={trendComputed} selectedBoroughs={selectedBoroughs} />
-          </div>
-
-          <div className="chart-card">
-            <div className="chart-card-header">
-              <div>
-                <h3>Avg Floors by Land Use</h3>
-                <div className="chart-subtitle">Horizontal bars sorted by avg floors. Click to filter.</div>
-              </div>
-            </div>
-            <LandUseBar data={landUseComputed} selected={selectedLandUse} onSelect={setSelectedLandUse} />
-          </div>
-
-          <div className="chart-card">
-            <div className="chart-card-header">
-              <div>
-                <h3>Zoning by Borough</h3>
-                <div className="chart-subtitle">Top 10 zones by borough. R = Residential · C = Commercial · M = Industrial</div>
-              </div>
-            </div>
-            <ZoningBar sampleData={dataForZoning} selected={selectedZoning} onSelect={setSelectedZoning} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <DashboardLayout
+      fullStats={fullStats}
+      sampleData={sampleData}
+      selectedBoroughs={selectedBoroughs}
+      toggleBorough={toggleBorough}
+      activeFilters={activeFilters}
+      clearFilter={clearFilter}
+      clearAll={clearAll}
+      filteredData={filteredData}
+      brushRange={brushRange}
+      setBrushRange={setBrushRange}
+      trendComputed={trendComputed}
+      landUseComputed={landUseComputed}
+      selectedLandUse={selectedLandUse}
+      setSelectedLandUse={setSelectedLandUse}
+      dataForZoning={dataForZoning}
+      selectedZoning={selectedZoning}
+      setSelectedZoning={setSelectedZoning}
+    />
   );
 }
 
