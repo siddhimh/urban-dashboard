@@ -3,7 +3,7 @@
 An interactive data visualization dashboard for exploring building characteristics across New York City's five boroughs. Built with React and D3.js for the NYU Information Visualization course (Spring 2026).
 
 ## Hosted At 
-https://siddhimh.github.io/nyc-urban-dashboard
+https://siddhimh.github.io/urban-dashboard/
 
 ## Overview
 
