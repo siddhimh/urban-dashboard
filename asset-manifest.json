@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/nyc-urban-dashboard/static/css/main.5a41451a.css",
-    "main.js": "/nyc-urban-dashboard/static/js/main.5fdf2d86.js",
+    "main.js": "/nyc-urban-dashboard/static/js/main.8c9aa4a0.js",
     "index.html": "/nyc-urban-dashboard/index.html",
     "main.5a41451a.css.map": "/nyc-urban-dashboard/static/css/main.5a41451a.css.map",
-    "main.5fdf2d86.js.map": "/nyc-urban-dashboard/static/js/main.5fdf2d86.js.map"
+    "main.8c9aa4a0.js.map": "/nyc-urban-dashboard/static/js/main.8c9aa4a0.js.map"
   },
   "entrypoints": [
     "static/css/main.5a41451a.css",
-    "static/js/main.5fdf2d86.js"
+    "static/js/main.8c9aa4a0.js"
   ]
 }
