@@ -2,6 +2,9 @@
 
 An interactive data visualization dashboard for exploring building characteristics across New York City's five boroughs. Built with React and D3.js for the NYU Information Visualization course (Spring 2026).
 
+## Hosted At 
+https://siddhimh.github.io/nyc-urban-dashboard
+
 ## Overview
 
 The dashboard visualizes **815,000+ NYC buildings** from the [PLUTO dataset](https://www.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page), enabling exploration of urban development patterns through six coordinated views with interactive cross-filtering.

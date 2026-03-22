@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import * as d3 from 'd3';
 import { BOROUGH_NAMES } from './colors';
-import './app.css';
+import './App.css';
 import DashboardLayout from "./components/layout/dashboard";
 
 
