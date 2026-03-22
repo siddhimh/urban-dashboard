@@ -17,6 +17,8 @@ const LAND_USE_LABELS = {
 
 function App() {
 
+  const base = process.env.PUBLIC_URL
+
   //raw dataset
   const [sampleData, setSampleData] = useState([]);
 
@@ -42,8 +44,8 @@ function App() {
   //loading the csv data 
   useEffect(() => {
     Promise.all([
-      d3.csv("/pluto_sample.csv"),
-      d3.csv("/full_stats.csv")
+      d3.csv(`${base}/pluto_sample.csv`),
+      d3.csv(`${base}/full_stats.csv`)
     ]).then(([sample, stats]) => {
 
       //convert numeric fields from strings to numbers
