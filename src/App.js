@@ -1,9 +1,14 @@
 //Loads the NYC building data and displays a dashboard with the data
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import * as d3 from 'd3';
 import { BOROUGH_NAMES } from './colors';
 import './App.css';
 import DashboardLayout from "./components/layout/dashboard";
+import TopBar from "./components/layout/topbar";
+
+//Lazy-load the 3D view so 2D-only sessions never download Three.js,
+//react-three-fiber, or drei. Bundle is fetched on first switch to '3D'.
+const CityView3D = lazy(() => import("./components/layout/city-view3d"));
 
 
 //Land use codes are mapped to human-readable labels
@@ -31,6 +36,9 @@ function App() {
   const [selectedZoning, setSelectedZoning] = useState(null);
   const [brushRange, setBrushRange] = useState(null);
 
+  //active view mode: '2D' (existing dashboard) or '3D' (placeholder city view)
+  const [activeView, setActiveView] = useState('2D');
+
   //adding and removing borough from set and toggling
   const toggleBorough = (b) => {
     setSelectedBoroughs(prev => {
@@ -44,7 +52,7 @@ function App() {
   //loading the csv data 
   useEffect(() => {
     Promise.all([
-      d3.csv(`${base}/pluto_sample.csv`),
+      d3.csv(`${base}/pluto_3d_sample.csv`),
       d3.csv(`${base}/full_stats.csv`)
     ]).then(([sample, stats]) => {
 
@@ -204,6 +212,65 @@ function App() {
     );
   }
 
+  //3D view: clicking a building only highlights it locally (in CityView3D).
+  //This callback fires only when the user explicitly hits "Apply as Filters"
+  //in the selection panel. It REPLACES the borough/landuse/zoning filters
+  //with values pulled from the selected building's record so the rest of
+  //the dashboard reflects "show me everything like this".
+  const applyBuildingFilters = (record) => {
+    if (!record) return;
+    if (record.borough) {
+      setSelectedBoroughs(new Set([record.borough]));
+    }
+    if (record.landuse != null && record.landuse !== '') {
+      setSelectedLandUse(String(Math.round(+record.landuse)));
+    }
+    if (record.zonedist1) {
+      setSelectedZoning(record.zonedist1);
+    }
+  };
+
+  if (activeView === '3D') {
+    return (
+      <div className="app">
+        <TopBar
+          totalBuildings={d3.format(",")(
+            fullStats ? fullStats.total_buildings : sampleData.length
+          )}
+          activeView={activeView}
+          setActiveView={setActiveView}
+        />
+        <Suspense
+          fallback={
+            <div
+              style={{
+                height: 'calc(100vh - 60px)',
+                width: '100%',
+                background: '#f4f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#9a9cb0',
+                fontSize: 16,
+              }}
+            >
+              Loading 3D view...
+            </div>
+          }
+        >
+          <CityView3D
+            data={filteredData}
+            fullData={sampleData}
+            onApplyFilters={applyBuildingFilters}
+            activeFilters={activeFilters}
+            clearFilter={clearFilter}
+            clearAll={clearAll}
+          />
+        </Suspense>
+      </div>
+    );
+  }
+
   //creates a layout for the dashboard
   return (
     <DashboardLayout
@@ -224,6 +291,8 @@ function App() {
       dataForZoning={dataForZoning}
       selectedZoning={selectedZoning}
       setSelectedZoning={setSelectedZoning}
+      activeView={activeView}
+      setActiveView={setActiveView}
     />
   );
 }

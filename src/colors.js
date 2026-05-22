@@ -12,10 +12,10 @@ import * as d3 from 'd3';
 
 export const BOROUGH_PALETTE = {
   MN: "#c4314b",
-  BX: "#e58429",
-  SI: "#8a8a8a",
+  BX: "#8b5cf6" ,
+ SI: "#a8b545",  
   QN: "#2fa4a0",
-  BK: "#3969ac"
+  BK:  "#e58429"
 };
 
 export const BOROUGH_ORDER = ["MN", "BX", "SI", "QN", "BK"];
@@ -37,5 +37,5 @@ export const BOROUGH_COLOR = d3.scaleOrdinal()
  * Goes from cool blue → neutral → warm rose
  */
 export const DIVERGING_INTERPOLATOR = d3.interpolateRgbBasis([
-  "#3969ac", "#8a8a8a", "#e58429", "#c4314b"
+ "#8b5cf6"  , "#a8b545", "#e58429", "#c4314b"
 ]);

@@ -27,6 +27,8 @@ function DashboardLayout({
   dataForZoning,
   selectedZoning,
   setSelectedZoning,
+  activeView,
+  setActiveView,
 }) {
   return (
     <div className="app">
@@ -34,6 +36,8 @@ function DashboardLayout({
         totalBuildings={d3.format(",")(
           fullStats ? fullStats.total_buildings : sampleData.length
         )}
+        activeView={activeView}
+        setActiveView={setActiveView}
       />
 
       <FiltersBar
