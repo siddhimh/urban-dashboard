@@ -123,3 +123,26 @@ export function projectorFromData(data, options = {}) {
   const extent = getGeoExtent(data, options);
   return createProjection(extent, options);
 }
+
+// Derive the rectangular platform footprint (in world units) that the
+// borough's cos-lat-corrected geographic extent fits into when the
+// projector above is built with the same `worldSize`. Mirrors the
+// math in `createProjection` so the platform is *exactly* the bbox
+// of the projected points -- no overflow, no slack.
+//
+//   const dims = derivePlatformSize(extent, 12);
+//   // dims.platformWidth  = world units along x (lng)
+//   // dims.platformDepth  = world units along z (lat)
+export function derivePlatformSize(extent, worldSize = DEFAULT_WORLD_SIZE) {
+  if (!extent) {
+    return { platformWidth: worldSize, platformDepth: worldSize };
+  }
+  const cosLat = Math.cos((extent.centerLat * Math.PI) / 180);
+  const lngSpan = (extent.maxLng - extent.minLng) * cosLat;
+  const latSpan = extent.maxLat - extent.minLat;
+  const scale = worldSize / Math.max(lngSpan, latSpan, 1e-9);
+  return {
+    platformWidth: lngSpan * scale,
+    platformDepth: latSpan * scale,
+  };
+}

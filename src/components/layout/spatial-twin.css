@@ -1,0 +1,1012 @@
+.spatial-shell {
+  width: 100vw;
+  height: 100vh;
+  background: #030711;
+  color: #e8f7ff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.spatial-toolbar {
+  min-height: 76px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: rgba(3, 7, 17, 0.96);
+  border-bottom: 1px solid rgba(57, 213, 255, 0.18);
+  z-index: 10;
+}
+
+.spatial-toolbar-identity {
+  min-width: 0;
+}
+
+.spatial-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.spatial-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.spatial-control-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f8795;
+  font-weight: 700;
+}
+
+.spatial-kicker {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #39d5ff;
+  font-weight: 700;
+}
+
+.spatial-toolbar h2 {
+  margin: 2px 0;
+  font-size: 18px;
+}
+
+.spatial-toolbar p {
+  margin: 0;
+  font-size: 12px;
+  color: #8da3b5;
+}
+
+.spatial-scale-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.spatial-scale-tabs button {
+  border: 1px solid rgba(57, 213, 255, 0.25);
+  background: rgba(255, 255, 255, 0.045);
+  color: #9fb7c8;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.spatial-scale-tabs button.active {
+  background: rgba(57, 213, 255, 0.16);
+  color: #e8f7ff;
+  border-color: rgba(57, 213, 255, 0.62);
+}
+
+.spatial-scale-tabs button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.spatial-enter-scale-btn,
+.spatial-return-tabletop-btn {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.28),
+    rgba(57, 213, 255, 0.08)
+  );
+  color: #e8f7ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(57, 213, 255, 0.18);
+  transition: transform 140ms ease, box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.spatial-enter-scale-btn:hover,
+.spatial-return-tabletop-btn:hover {
+  transform: translate(-50%, -2px);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.38),
+    rgba(57, 213, 255, 0.14)
+  );
+}
+
+.spatial-return-tabletop-btn {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 186, 0, 0.22),
+    rgba(255, 186, 0, 0.06)
+  );
+  border-color: rgba(255, 186, 0, 0.6);
+  color: #ffe6a8;
+}
+
+.spatial-return-tabletop-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 186, 0, 0.32),
+    rgba(255, 186, 0, 0.1)
+  );
+}
+
+.spatial-canvas-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.spatial-instructions {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(5, 12, 24, 0.78);
+  border: 1px solid rgba(57, 213, 255, 0.18);
+  color: #a9bdca;
+  font-size: 12px;
+  backdrop-filter: blur(12px);
+  z-index: 5;
+}
+
+.spatial-instructions strong {
+  color: #e8f7ff;
+}
+
+.spatial-layer-legend {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  width: 230px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(5, 12, 24, 0.84);
+  border: 1px solid rgba(57, 213, 255, 0.22);
+  color: #c8dde9;
+  font-size: 11px;
+  backdrop-filter: blur(12px);
+  z-index: 6;
+}
+
+.spatial-layer-legend-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.spatial-layer-legend-label > span:first-child {
+  font-size: 12px;
+  color: #e8f7ff;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.spatial-layer-legend-unit {
+  font-size: 9px;
+  color: #7f93a3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spatial-layer-legend-ramp {
+  height: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 6px;
+}
+
+.spatial-layer-legend-range {
+  display: flex;
+  justify-content: space-between;
+  color: #9fb7c8;
+  font-size: 11px;
+}
+
+.spatial-layer-legend-note {
+  margin-top: 6px;
+  color: #6f8795;
+  font-size: 10px;
+  font-style: italic;
+}
+
+.spatial-selection-card {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 320px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(5, 12, 24, 0.84);
+  border: 1px solid rgba(57, 213, 255, 0.28);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(16px);
+  z-index: 6;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #8da3b5;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.card-label {
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #39d5ff;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metric-grid div {
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.metric-grid span {
+  display: block;
+  font-size: 10px;
+  color: #7f93a3;
+  margin-bottom: 4px;
+}
+
+.metric-grid strong {
+  font-size: 13px;
+  color: #e8f7ff;
+}
+
+.apply-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(57, 213, 255, 0.35);
+  background: rgba(57, 213, 255, 0.12);
+  color: #dff8ff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spatial-cluster-card {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 340px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(5, 18, 14, 0.84);
+  border: 1px solid rgba(154, 247, 192, 0.32);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(16px);
+  z-index: 6;
+}
+
+.metric-wide {
+  grid-column: 1 / span 2;
+}
+
+.spatial-cluster-radius {
+  margin-top: 14px;
+}
+
+.spatial-cluster-radius-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #97b7ad;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.spatial-cluster-radius input[type="range"] {
+  width: 100%;
+  accent-color: #9af7c0;
+}
+
+.spatial-cluster-enter-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(154, 247, 192, 0.55);
+  background: linear-gradient(
+    135deg,
+    rgba(154, 247, 192, 0.25),
+    rgba(154, 247, 192, 0.06)
+  );
+  color: #e2fff0;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.spatial-cluster-enter-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(154, 247, 192, 0.36),
+    rgba(154, 247, 192, 0.1)
+  );
+}
+
+.spatial-tool-picker {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(5, 12, 24, 0.84);
+  border: 1px solid rgba(57, 213, 255, 0.22);
+  backdrop-filter: blur(12px);
+  z-index: 6;
+}
+
+.spatial-tool-picker-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6f8795;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.spatial-tool-picker-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.spatial-tool-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.25);
+  background: rgba(255, 255, 255, 0.045);
+  color: #9fb7c8;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.spatial-tool-btn.active {
+  background: rgba(57, 213, 255, 0.18);
+  color: #e8f7ff;
+  border-color: rgba(57, 213, 255, 0.65);
+}
+
+.spatial-tool-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.spatial-scenario-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(57, 213, 255, 0.16);
+}
+
+.spatial-scenario-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6f8795;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.spatial-scenario-delta {
+  letter-spacing: 0.04em;
+  color: #ffb86c;
+}
+
+.spatial-scenario-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spatial-scenario-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 186, 0, 0.45);
+  background: rgba(255, 186, 0, 0.12);
+  color: #ffe6a8;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.spatial-scenario-btn:hover {
+  background: rgba(255, 186, 0, 0.22);
+}
+
+.spatial-scenario-value {
+  flex: 1;
+  text-align: center;
+}
+
+.spatial-scenario-value strong {
+  display: block;
+  font-size: 24px;
+  color: #e8f7ff;
+  line-height: 1;
+}
+
+.spatial-scenario-value span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8da3b5;
+  margin-top: 3px;
+}
+
+.spatial-scenario-reset {
+  width: 100%;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: #8da3b5;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.spatial-scenario-reset:hover {
+  color: #c8dde9;
+}
+
+.spatial-walkthrough-toggle {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 220, 130, 0.5);
+  background: rgba(40, 28, 6, 0.78);
+  color: #ffe6a8;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.spatial-walkthrough-toggle:hover {
+  background: rgba(40, 28, 6, 0.94);
+}
+
+.spatial-walkthrough {
+  position: absolute;
+  bottom: 88px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(540px, calc(100vw - 80px));
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  background: rgba(5, 12, 24, 0.92);
+  border: 1px solid rgba(255, 220, 130, 0.32);
+  color: #e8f7ff;
+  backdrop-filter: blur(14px);
+  z-index: 7;
+}
+
+.spatial-walkthrough-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.spatial-walkthrough-step {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffd58a;
+  font-weight: 700;
+}
+
+.spatial-walkthrough-close {
+  background: transparent;
+  border: none;
+  color: #8da3b5;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.spatial-walkthrough-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.spatial-walkthrough-blurb {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #c8dde9;
+  margin-bottom: 12px;
+}
+
+.spatial-walkthrough-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.spatial-walkthrough-controls button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.25);
+  background: rgba(255, 255, 255, 0.045);
+  color: #c8dde9;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.spatial-walkthrough-controls button:hover {
+  background: rgba(57, 213, 255, 0.15);
+  color: #e8f7ff;
+}
+
+.spatial-walkthrough-enter {
+  border-color: rgba(154, 247, 192, 0.55) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(154, 247, 192, 0.25),
+    rgba(154, 247, 192, 0.06)
+  ) !important;
+  color: #e2fff0 !important;
+}
+
+.app-loading {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #030711;
+  color: #9eeaff;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------
+ * Phase 3: selection-panel typography hooks + hover tooltip styling.
+ * The tooltip lives inside a drei <Html> wrapper so it gets sized
+ * relative to the document, not the canvas.
+ * ----------------------------------------------------------------*/
+
+.spatial-selection-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-right: 24px;
+}
+
+.spatial-selection-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.spatial-selection-card h3 {
+  margin: 0;
+  padding-right: 0;
+  font-size: 17px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spatial-tooltip-wrapper {
+  pointer-events: none;
+}
+
+.spatial-tooltip {
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 12px));
+  padding: 8px 11px;
+  border-radius: 10px;
+  background: rgba(5, 12, 24, 0.92);
+  border: 1px solid rgba(57, 213, 255, 0.32);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  color: #dff8ff;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  min-width: 160px;
+  max-width: 220px;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.spatial-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  background: rgba(5, 12, 24, 0.92);
+  border-right: 1px solid rgba(57, 213, 255, 0.32);
+  border-bottom: 1px solid rgba(57, 213, 255, 0.32);
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+.spatial-tooltip-title {
+  display: block;
+  margin-bottom: 6px;
+  color: #e8f7ff;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spatial-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 1px 0;
+}
+
+.spatial-tooltip-row span:first-child {
+  color: #8da3b5;
+}
+
+.spatial-tooltip-row span:last-child {
+  color: #e8f7ff;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------
+ * Phase 4: "Enter AR" button in the toolbar.
+ * ----------------------------------------------------------------*/
+
+.spatial-ar-btn {
+  margin-left: 14px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.55);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.22),
+    rgba(57, 213, 255, 0.08)
+  );
+  color: #e8f7ff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease,
+    background 120ms ease;
+}
+
+.spatial-ar-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.32),
+    rgba(57, 213, 255, 0.12)
+  );
+  box-shadow: 0 6px 18px rgba(57, 213, 255, 0.22);
+}
+
+.spatial-ar-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spatial-ar-btn-floating {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 12;
+  margin-left: 0;
+}
+
+.spatial-ar-btn-primary {
+  margin-left: 0;
+  padding: 11px 22px;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(57, 213, 255, 0.28);
+}
+
+.spatial-ar-hero {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 48px));
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: rgba(5, 12, 24, 0.9);
+  border: 1px solid rgba(57, 213, 255, 0.35);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(16px);
+  z-index: 7;
+  pointer-events: auto;
+}
+
+.spatial-ar-hero strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #39d5ff;
+  margin-bottom: 12px;
+}
+
+.spatial-ar-hero ol {
+  margin: 0 0 16px 18px;
+  padding: 0;
+  color: #c8dde9;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.spatial-ar-hero ol li {
+  margin-bottom: 4px;
+}
+
+.spatial-ar-hero button {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.65);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.32),
+    rgba(57, 213, 255, 0.1)
+  );
+  color: #e8f7ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.spatial-ar-hero button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(57, 213, 255, 0.42),
+    rgba(57, 213, 255, 0.16)
+  );
+}
+
+.spatial-xr-hint {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  max-width: 520px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(5, 12, 24, 0.9);
+  border: 1px solid rgba(255, 170, 64, 0.45);
+  color: #ffd9a8;
+  font-size: 12px;
+  line-height: 1.45;
+  z-index: 11;
+  backdrop-filter: blur(10px);
+}
+
+.spatial-xr-hint strong {
+  color: #ffe8c7;
+}
+
+.spatial-xr-hint code {
+  font-size: 11px;
+  color: #ffb86c;
+}
+
+.spatial-ar-banner {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(5, 12, 24, 0.86);
+  border: 1px solid rgba(57, 213, 255, 0.45);
+  color: #dff8ff;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  z-index: 8;
+}
+
+.spatial-ar-banner .spatial-ar-hint {
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 11px;
+  color: #9fb7c8;
+}
+
+.spatial-ar-banner button {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(57, 213, 255, 0.45);
+  background: transparent;
+  color: #dff8ff;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.spatial-ar-banner button.active {
+  background: rgba(57, 213, 255, 0.22);
+  border-color: rgba(57, 213, 255, 0.85);
+}
+
+.spatial-ar-banner-expanded {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: min(640px, calc(100vw - 36px));
+  padding: 12px 14px;
+  border-radius: 16px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.spatial-ar-banner-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.spatial-ar-badge {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(57, 213, 255, 0.22);
+  border: 1px solid rgba(57, 213, 255, 0.55);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e8f7ff;
+}
+
+.spatial-ar-banner-expanded .spatial-ar-hint {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #c8dde9;
+}
+
+.spatial-ar-banner-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.spatial-ar-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spatial-ar-control-group > span {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6f8795;
+  font-weight: 700;
+}
+
+.spatial-ar-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.spatial-ar-chip-row button {
+  padding: 5px 10px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.spatial-ar-chip-row button.active {
+  background: rgba(57, 213, 255, 0.2);
+}
+
+.spatial-ar-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spatial-ar-banner-actions button {
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.spatial-ar-action-primary {
+  background: rgba(154, 247, 192, 0.18) !important;
+  border-color: rgba(154, 247, 192, 0.55) !important;
+  color: #e2fff0 !important;
+}
+
+/* ------------------------------------------------------------------
+ * Phase 5: XR billboarded selection card. Lives inside an <Html
+ * transform> wrapper, which sets its own size; we strip the absolute
+ * positioning the desktop variant uses and let the WebGL plane sit
+ * the card next to the selected building.
+ * ----------------------------------------------------------------*/
+
+.spatial-xr-card-wrapper {
+  pointer-events: none;
+}
+
+.spatial-xr-card-wrapper .spatial-selection-card {
+  position: static;
+  top: auto;
+  right: auto;
+  width: 320px;
+  pointer-events: auto;
+}

@@ -1,204 +1,166 @@
-// Selection details panel for the 3D city scene.
+// Selected-building card for the Levitating City Twin.
 //
-// Plain DOM, rendered as a SIBLING of <Canvas>. Appears whenever the
-// user has clicked a building. Click is purely local until the user
-// explicitly hits "Apply as filters", at which point the parent's
-// onApplyFilters callback fires and the App-level filter state updates.
-//
-// No business logic here. The panel doesn't know anything about App
-// state -- it just renders a record and forwards intent.
+// Replaces the inline card that used to live in SpatialTwinView. Pure
+// presentational: receives a record, fires onClear, never reaches up
+// into App state. Styled by `.spatial-selection-card` + helpers in
+// `src/components/layout/spatial-twin.css` so the look matches the
+// rest of the dark-glass UI.
 
+import { BOROUGH_NAMES, BOROUGH_PALETTE } from "../../colors";
 import {
-  BOROUGH_NAMES,
-  BOROUGH_PALETTE,
-} from '../../utils/building-color';
+  clearProposal,
+  setProposedFloors,
+  useProposedFloors,
+} from "./scenario-store";
 
-// Mirrors the local LAND_USE_LABELS in App.js. Duplicated here (11
-// entries) to avoid creating a new shared module just for this panel.
 const LAND_USE_LABELS = {
-  '1': 'One & Two Family',
-  '2': 'Multi-Family Walk-Up',
-  '3': 'Multi-Family Elevator',
-  '4': 'Mixed Res/Commercial',
-  '5': 'Commercial & Office',
-  '6': 'Industrial & Mfg',
-  '7': 'Transport & Utility',
-  '8': 'Public Facilities',
-  '9': 'Open Space',
-  '10': 'Parking',
-  '11': 'Vacant Land',
+  "1": "One & Two Family",
+  "2": "Multi-Family Walk-Up",
+  "3": "Multi-Family Elevator",
+  "4": "Mixed Res / Commercial",
+  "5": "Commercial & Office",
+  "6": "Industrial & Manufacturing",
+  "7": "Transport & Utility",
+  "8": "Public Facilities",
+  "9": "Open Space",
+  "10": "Parking",
+  "11": "Vacant Land",
 };
 
-const fmt = (n) => (Number.isFinite(+n) ? Math.round(+n).toLocaleString() : 'N/A');
+const fmt = (n) =>
+  Number.isFinite(+n) ? Math.round(+n).toLocaleString() : "—";
 
-function Row({ label, value }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: 16,
-        fontSize: 11,
-        padding: '2px 0',
-      }}
-    >
-      <span style={{ color: '#9a9cb0' }}>{label}</span>
-      <span style={{ color: '#1a1a2e', fontWeight: 600 }}>{value}</span>
-    </div>
-  );
-}
+function SelectionPanel({ record, onClear, selectedId }) {
+  // Note: hooks must be called unconditionally. If no record, we use
+  // a stable placeholder id so the hook still fires but its result is
+  // ignored downstream.
+  const proposalId = selectedId ?? record?.bbl ?? record?.bin ?? record?.id ?? null;
+  const proposedFloors = useProposedFloors(proposalId);
 
-function SelectionPanel({
-  record,
-  onApplyFilters,
-  onClear,
-  position = 'bottom-left',
-}) {
   if (!record) return null;
 
-  const anchor = {
-    position: 'absolute',
-    zIndex: 5,
-    background: 'rgba(255,255,255,0.95)',
-    backdropFilter: 'blur(6px)',
-    border: '1px solid #ebedf2',
-    borderRadius: 10,
-    padding: '12px 14px',
-    boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
-    fontFamily: "'Inter', 'Segoe UI', sans-serif",
-    minWidth: 240,
-    maxWidth: 300,
-  };
-  if (position === 'bottom-left') Object.assign(anchor, { bottom: 16, left: 16 });
-  else if (position === 'bottom-right') Object.assign(anchor, { bottom: 16, right: 16 });
-  else if (position === 'top-left') Object.assign(anchor, { top: 16, left: 16 });
-  else Object.assign(anchor, { top: 16, right: 16 });
-
   const boroughCode = record.borough;
-  const boroughLabel = BOROUGH_NAMES[boroughCode] ?? boroughCode ?? 'N/A';
-  const boroughColor = BOROUGH_PALETTE[boroughCode] ?? '#1a1a2e';
+  const boroughLabel = BOROUGH_NAMES[boroughCode] ?? boroughCode ?? "—";
+  const boroughColor = BOROUGH_PALETTE[boroughCode] ?? "#39d5ff";
+
+  const baseFloors = Math.max(1, Math.round(+record.numfloors || 1));
+  const currentProposal = proposedFloors ?? baseFloors;
+  const delta = currentProposal - baseFloors;
+
+  const adjust = (next) => {
+    const clamped = Math.max(1, Math.min(120, Math.round(next)));
+    if (clamped === baseFloors) {
+      clearProposal(proposalId);
+    } else if (proposalId != null) {
+      setProposedFloors(proposalId, clamped);
+    }
+  };
 
   const landuseCode =
-    record.landuse != null && record.landuse !== ''
+    record.landuse != null && record.landuse !== ""
       ? String(Math.round(+record.landuse))
       : null;
   const landuseLabel = landuseCode
     ? LAND_USE_LABELS[landuseCode] ?? `Land Use ${landuseCode}`
-    : 'N/A';
+    : "—";
 
-  const zoning = record.zonedist1 || 'N/A';
   const year =
     Number.isFinite(+record.yearbuilt) && +record.yearbuilt > 0
       ? record.yearbuilt
-      : 'N/A';
+      : "—";
+  const zoning = record.zonedist1 || "—";
 
   return (
-    <div style={anchor}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 8,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            color: '#9a9cb0',
-          }}
-        >
-          Selected Building
-        </div>
-        <button
-          type="button"
-          onClick={onClear}
-          aria-label="Clear selection"
-          title="Clear selection"
-          style={{
-            border: 'none',
-            background: 'transparent',
-            color: '#9a9cb0',
-            fontSize: 16,
-            lineHeight: 1,
-            cursor: 'pointer',
-            padding: 2,
-          }}
-        >
-          &times;
-        </button>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          marginBottom: 8,
-        }}
-      >
-        <span
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            background: boroughColor,
-            flexShrink: 0,
-          }}
-        />
-        <strong
-          style={{
-            fontSize: 13,
-            color: '#1a1a2e',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-          title={record.address || 'Unknown address'}
-        >
-          {record.address || 'Unknown address'}
-        </strong>
-      </div>
-
-      <Row label="Borough" value={boroughLabel} />
-      <Row label="Land Use" value={landuseLabel} />
-      <Row label="Zoning" value={zoning} />
-      <Row label="Floors" value={fmt(record.numfloors)} />
-      <Row label="Year" value={year} />
-      <Row label="Area" value={`${fmt(record.bldgarea)} sqft`} />
-
+    <div className="spatial-selection-card">
       <button
         type="button"
-        onClick={() => onApplyFilters?.(record)}
-        style={{
-          marginTop: 10,
-          width: '100%',
-          padding: '6px 10px',
-          border: 'none',
-          borderRadius: 8,
-          background: '#1a1a2e',
-          color: '#fff',
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.02em',
-          cursor: 'pointer',
-        }}
+        className="close-btn"
+        onClick={onClear}
+        aria-label="Clear selection"
       >
-        Apply as Filters
+        ×
       </button>
-      <div
-        style={{
-          marginTop: 6,
-          fontSize: 10,
-          color: '#9a9cb0',
-          textAlign: 'center',
-          lineHeight: 1.3,
-        }}
-      >
-        Filters borough, land use, and zoning
+
+      <div className="card-label">Selected building</div>
+
+      <div className="spatial-selection-title">
+        <span
+          className="spatial-selection-dot"
+          style={{ background: boroughColor }}
+        />
+        <h3 title={record.address || "NYC Building"}>
+          {record.address || "NYC Building"}
+        </h3>
+      </div>
+
+      <div className="metric-grid">
+        <div>
+          <span>Borough</span>
+          <strong>{boroughLabel}</strong>
+        </div>
+        <div>
+          <span>Floors</span>
+          <strong>{fmt(record.numfloors)}</strong>
+        </div>
+        <div>
+          <span>Year</span>
+          <strong>{year}</strong>
+        </div>
+        <div>
+          <span>Area</span>
+          <strong>{fmt(record.bldgarea)} sqft</strong>
+        </div>
+        <div>
+          <span>Land Use</span>
+          <strong>{landuseLabel}</strong>
+        </div>
+        <div>
+          <span>Zoning</span>
+          <strong>{zoning}</strong>
+        </div>
+      </div>
+
+      <div className="spatial-scenario-section">
+        <div className="spatial-scenario-label">
+          <span>Scenario massing</span>
+          {delta !== 0 && (
+            <span className="spatial-scenario-delta">
+              {delta > 0 ? "+" : ""}
+              {delta} floors
+            </span>
+          )}
+        </div>
+        <div className="spatial-scenario-row">
+          <button
+            type="button"
+            className="spatial-scenario-btn"
+            onClick={() => adjust(currentProposal - 1)}
+            aria-label="Decrease proposed floors"
+          >
+            −
+          </button>
+          <div className="spatial-scenario-value">
+            <strong>{currentProposal}</strong>
+            <span>proposed floors</span>
+          </div>
+          <button
+            type="button"
+            className="spatial-scenario-btn"
+            onClick={() => adjust(currentProposal + 1)}
+            aria-label="Increase proposed floors"
+          >
+            +
+          </button>
+        </div>
+        {delta !== 0 && (
+          <button
+            type="button"
+            className="spatial-scenario-reset"
+            onClick={() => clearProposal(proposalId)}
+          >
+            Reset to original ({baseFloors})
+          </button>
+        )}
       </div>
     </div>
   );
